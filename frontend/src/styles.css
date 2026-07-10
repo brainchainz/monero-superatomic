@@ -1,0 +1,121 @@
+:root {
+  --bg: #0b0d12;
+  --panel: #12151e;
+  --panel-2: #1a1e2a;
+  --text: #e6e8ef;
+  --muted: #8f96a8;
+  --accent: #ff6600;
+  --accent-2: #ff8c00;
+  --good: #27c93f;
+  --bad: #ff4d4f;
+  --border: #2a2f3e;
+  --radius: 10px;
+}
+
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; }
+pre, code, .mono { font-family: 'JetBrains Mono', monospace; }
+
+.loading { display: flex; align-items: center; justify-content: center; height: 100%; color: var(--muted); }
+
+.login-wrap { display: flex; align-items: center; justify-content: center; height: 100%; }
+.login-card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 40px; width: 360px; }
+.login-card h1 { margin: 0 0 6px; font-size: 26px; }
+.login-card p { margin: 0 0 24px; color: var(--muted); }
+.login-card label { display: block; margin-bottom: 8px; color: var(--muted); font-size: 13px; }
+.login-card input { width: 100%; padding: 12px; background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; color: var(--text); }
+.login-card button { width: 100%; margin-top: 18px; padding: 12px; background: var(--accent); border: none; border-radius: 6px; color: #fff; font-weight: 600; cursor: pointer; }
+.login-card button:disabled { opacity: .6; cursor: not-allowed; }
+
+.dashboard { min-height: 100%; }
+header { display: flex; align-items: center; justify-content: space-between; padding: 18px 28px; border-bottom: 1px solid var(--border); background: var(--panel); }
+.brand { display: flex; align-items: center; gap: 14px; }
+.logo { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; display: block; }
+header h1 { margin: 0; font-size: 20px; }
+.subtitle { color: var(--muted); font-size: 13px; }
+.header-right { display: flex; align-items: center; gap: 12px; }
+.pill { padding: 6px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; text-transform: uppercase; }
+.pill.ok { background: rgba(39,201,63,.15); color: var(--good); }
+.pill.bad { background: rgba(255,77,79,.15); color: var(--bad); }
+.logout { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 8px 14px; border-radius: 6px; cursor: pointer; }
+
+.tabs { display: flex; gap: 8px; padding: 14px 28px; border-bottom: 1px solid var(--border); }
+.tabs button { background: transparent; border: none; color: var(--muted); padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: 500; }
+.tabs button.active { background: var(--panel-2); color: var(--text); }
+
+main { padding: 24px 28px; max-width: 1200px; margin: 0 auto; }
+
+.card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; margin-bottom: 20px; }
+.card-title { font-size: 15px; font-weight: 600; color: var(--muted); margin-bottom: 16px; text-transform: uppercase; letter-spacing: .04em; }
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.big { font-size: 34px; font-weight: 700; margin: 6px 0; }
+/* Addresses are single long unbreakable strings, so break them anywhere.
+   Prose (.muted) must wrap at word boundaries and only break a word when it
+   would otherwise overflow, so it never splits normal words mid-word. */
+.address { color: var(--muted); font-size: 13px; word-break: break-all; }
+.muted { color: var(--muted); font-size: 13px; overflow-wrap: break-word; }
+.label { color: var(--muted); font-size: 12px; text-transform: uppercase; margin-bottom: 4px; }
+.value { font-weight: 600; }
+
+button { background: var(--accent); border: none; color: #fff; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+button:disabled { opacity: .6; }
+button.secondary { background: var(--panel-2); border: 1px solid var(--border); }
+
+input, textarea, select { background: var(--panel-2); border: 1px solid var(--border); color: var(--text); padding: 10px; border-radius: 6px; width: 100%; margin-bottom: 12px; font-family: inherit; }
+textarea { resize: vertical; }
+input[type="checkbox"], input[type="radio"] { width: auto; margin: 0; padding: 0; flex: none; }
+.check-row { display: flex; align-items: flex-start; gap: 8px; text-transform: none; margin-bottom: 12px; color: var(--text); cursor: pointer; }
+.check-row span { font-size: 13px; line-height: 1.4; }
+.hero { display: flex; justify-content: center; margin-bottom: 20px; }
+.hero-vid { width: 200px; height: 200px; border-radius: 16px; }
+section { border-top: 1px solid var(--border); padding-top: 18px; margin-top: 18px; }
+section h3 { margin: 0 0 14px; font-size: 16px; }
+label { display: block; color: var(--muted); font-size: 12px; text-transform: uppercase; margin-bottom: 6px; }
+
+.banner { padding: 12px; border-radius: 6px; margin-bottom: 16px; background: rgba(255,102,0,.12); color: var(--accent-2); }
+.banner.error { background: rgba(255,77,79,.12); color: var(--bad); }
+
+.warning { background: rgba(255,77,79,.1); border-left: 3px solid var(--bad); padding: 12px; border-radius: 4px; color: #ffb4b4; }
+.seed-box { background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; padding: 14px; margin-top: 14px; }
+.seed-label { color: var(--muted); font-size: 12px; text-transform: uppercase; margin-bottom: 8px; }
+.seed-box pre { white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; }
+.button-row { display: flex; gap: 12px; margin-top: 10px; }
+
+.swaps-list { display: flex; flex-direction: column; gap: 14px; }
+.swap-row { background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+.swap-head { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; flex-wrap: wrap; }
+.swap-id { font-family: 'JetBrains Mono', monospace; color: var(--muted); }
+.state { padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+.state.open { background: rgba(255,102,0,.15); color: var(--accent-2); }
+.state.done { background: rgba(39,201,63,.15); color: var(--good); }
+.date { margin-left: auto; color: var(--muted); font-size: 12px; }
+.swap-bar { height: 6px; background: var(--panel); border-radius: 3px; overflow: hidden; margin-bottom: 10px; }
+.swap-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); border-radius: 3px; }
+.swap-details { display: flex; gap: 18px; flex-wrap: wrap; color: var(--muted); font-size: 13px; }
+
+.logs pre { background: var(--panel-2); padding: 14px; border-radius: 6px; max-height: 600px; overflow: auto; font-size: 12px; line-height: 1.5; }
+
+.fine-print { color: var(--muted); opacity: .75; font-size: 11px; line-height: 1.5; margin-top: 14px; overflow-wrap: break-word; }
+
+.txid-row { display: flex; align-items: baseline; gap: 8px; margin: 4px 0; min-width: 0; }
+.txid-label { color: var(--muted); font-size: 11px; text-transform: uppercase; flex: none; }
+.txid { font-size: 12px; color: var(--text); overflow-wrap: anywhere; cursor: pointer; min-width: 0; }
+.txid:hover { color: var(--accent-2); }
+.txid-actions { flex: none; display: inline-flex; align-items: center; gap: 6px; }
+.txid-copied { color: var(--good); font-size: 11px; }
+.txid-open { color: var(--accent); text-decoration: none; font-size: 15px; font-weight: 700; }
+.txid-open:hover { color: var(--accent-2); }
+
+.activity-row { display: flex; flex-direction: column; gap: 2px; padding: 10px 0; border-top: 1px solid var(--border); }
+.activity-head { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+.activity-type { padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; text-transform: uppercase; background: rgba(255,102,0,.15); color: var(--accent-2); }
+.activity-type.in { background: rgba(39,201,63,.15); color: var(--good); }
+.activity-type.bad { background: rgba(255,77,79,.15); color: var(--bad); }
+.activity-date { margin-left: auto; color: var(--muted); font-size: 12px; }
+
+@media (max-width: 800px) {
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .tabs { overflow-x: auto; }
+}
