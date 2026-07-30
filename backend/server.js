@@ -236,8 +236,22 @@ app.get('/api/deposit', requireAuth, asyncHandler(async (req, res) => {
 app.get('/api/quote', requireAuth, asyncHandler(async (req, res) => {
   if (!requireAsb(res)) return
   const q = await asbRpc('get_current_quote')
+  const ask = q.price / SATS_PER_BTC
+  // The engine's quote is our ask, which already includes the configured
+  // spread. Back it out to show the underlying market rate. Derived from the
+  // engine's own price feeds: the dashboard never calls an external price API.
+  let market = null
+  let spreadPct = null
+  try {
+    const spread = Number(TOML.parse(fs.readFileSync(CONFIG_PATH, 'utf8')).maker.ask_spread) || 0
+    if (spread > -1) market = ask / (1 + spread)
+    // Whole-number percent for display, matching the Config tab's convention.
+    spreadPct = +(spread * 100).toFixed(4)
+  } catch { /* config unreadable; omit the derived values rather than guess */ }
   res.json({
-    price: q.price / SATS_PER_BTC,
+    price: ask,
+    market,
+    spread: spreadPct,
     min_quantity: q.min_quantity / SATS_PER_BTC,
     max_quantity: q.max_quantity / SATS_PER_BTC
   })
@@ -378,8 +392,25 @@ app.get('/api/activity', requireAuth, asyncHandler(async (req, res) => {
 // Small preferences (block explorer URLs) live in their own file: config.toml
 // belongs to the ASB and rejects unknown fields outright.
 const UI_SETTINGS_FILE = path.join(DATA_DIR, 'ui-settings.json')
+
+// Explorer URLs end up in the href of the transaction links, so anything but
+// http(s) (a "javascript:" URL, say) would run script in the dashboard's own
+// origin. Validate on READ, not only on write: this file is also restorable
+// from a backup archive and editable on disk, so the POST handler is not the
+// only way a value can get here. Unknown keys are dropped.
+function sanitizeExplorer(v) {
+  if (typeof v !== 'string') return ''
+  const u = v.trim().replace(/\/+$/, '')
+  return /^https?:\/\/[^\s]+$/i.test(u) ? u : ''
+}
 function readUiSettings() {
-  try { return JSON.parse(fs.readFileSync(UI_SETTINGS_FILE, 'utf8')) } catch { return {} }
+  let raw = {}
+  try { raw = JSON.parse(fs.readFileSync(UI_SETTINGS_FILE, 'utf8')) } catch { return {} }
+  if (!raw || typeof raw !== 'object') return {}
+  return {
+    btcExplorer: sanitizeExplorer(raw.btcExplorer),
+    xmrExplorer: sanitizeExplorer(raw.xmrExplorer)
+  }
 }
 app.get('/api/ui-settings', requireAuth, (req, res) => res.json(readUiSettings()))
 app.post('/api/ui-settings', requireAuth, asyncHandler(async (req, res) => {
@@ -398,6 +429,22 @@ app.post('/api/ui-settings', requireAuth, asyncHandler(async (req, res) => {
   }
   fs.writeFileSync(UI_SETTINGS_FILE, JSON.stringify(settings, null, 2), { mode: 0o600 })
   res.json(settings)
+}))
+
+// ---- Swap engine version ------------------------------------------------------
+// Read from the binary itself rather than a hardcoded string, so this always
+// reports what is actually running. Cached: it cannot change without a restart.
+let versionCache = null
+app.get('/api/version', requireAuth, asyncHandler(async (req, res) => {
+  if (!versionCache) {
+    let asb = 'unknown'
+    try {
+      const out = await sh(`${process.env.ASB_BIN || '/bin/asb'} --version`)
+      asb = String(out).trim().split('\n')[0] || 'unknown'
+    } catch { /* keep "unknown" rather than failing the panel */ }
+    versionCache = { asb }
+  }
+  res.json(versionCache)
 }))
 
 // ---- Config -----------------------------------------------------------------

@@ -74,6 +74,18 @@ function HowTo() {
       </div>
 
       <div className="card">
+        <div className="card-title">Sharing screenshots</div>
+        <p className="muted">
+          Click <b>Hide</b> in the top bar before you screenshot, screen share, or record. It
+          replaces everything identifying with dots until you click <b>Show</b> again: addresses,
+          peer id, onion address, transaction ids, seeds, balances, prices, and swap amounts. Copy
+          buttons still copy the real value while hidden, so you can paste an address without
+          putting it on screen. One thing it cannot cover: opening a transaction in a block explorer
+          shows that id in the explorer page's address bar.
+        </p>
+      </div>
+
+      <div className="card">
         <div className="card-title">Safety</div>
         <p className="muted">
           Never share your seed, descriptor, or backup file; anything that can restore this node can

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Balances from './Balances.jsx'
 import Txid from './Txid.jsx'
 import { btcTxUrl, xmrTxUrl } from './explorers.js'
+import { Secret } from './privacy.jsx'
 
 const TYPE_LABELS = {
   'withdrawal': { text: 'Withdrawal', cls: '' },
@@ -120,9 +121,9 @@ function Withdraw({ api, explorers }) {
             <div className="activity-row" key={`${a.txid}-${i}`}>
               <div className="activity-head">
                 <span className={`activity-type ${t.cls}`}>{t.text}</span>
-                <span>{Number(a.amount).toFixed(8)} BTC</span>
-                {a.address && <span className="muted">to {a.address.slice(0, 16)}...</span>}
-                <span className="activity-date">{a.ts}</span>
+                <span><Secret value={Number(a.amount).toFixed(8)} /> BTC</span>
+                {a.address && <span className="muted">to <Secret value={a.address.slice(0, 16) + '...'} /></span>}
+                <span className="activity-date"><Secret value={a.ts} /></span>
               </div>
               <Txid txid={a.txid} url={btcTxUrl(a.txid, explorers)} />
             </div>
@@ -170,9 +171,9 @@ function Withdraw({ api, explorers }) {
           <div className="activity-row" key={`${t.txid}-${i}`}>
             <div className="activity-head">
               <span className={`activity-type ${t.direction === 'In' ? 'in' : ''}`}>{t.direction === 'In' ? 'Received' : 'Sent'}</span>
-              <span>{Number(t.amount).toFixed(6)} XMR</span>
+              <span><Secret value={Number(t.amount).toFixed(6)} /> XMR</span>
               <span className="muted">{t.confirmations} conf</span>
-              <span className="activity-date">{t.timestamp ? new Date(t.timestamp * 1000).toISOString().slice(0, 16).replace('T', ' ') : ''}</span>
+              <span className="activity-date"><Secret value={t.timestamp ? new Date(t.timestamp * 1000).toISOString().slice(0, 16).replace('T', ' ') : ''} /></span>
             </div>
             <Txid txid={t.txid} url={xmrTxUrl(t.txid, explorers)} />
           </div>

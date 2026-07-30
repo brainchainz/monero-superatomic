@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
+import { PrivacyProvider } from './privacy.jsx'
 // Fonts are bundled (not fetched from Google) so viewing the dashboard never
 // pings a third party. That matters for a Tor-focused app.
 import '@fontsource/inter/400.css'
@@ -13,6 +14,8 @@ import './styles.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <App />
+    <PrivacyProvider>
+      <App />
+    </PrivacyProvider>
   </React.StrictMode>
 )

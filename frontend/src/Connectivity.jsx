@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { copyText } from './clipboard.js'
+import { Secret } from './privacy.jsx'
 
 const REG_LABELS = {
   Registered: 'Registered',
@@ -45,7 +46,7 @@ function Connectivity({ api }) {
     <>
       <div className="card">
         <div className="card-title">Your Peer ID</div>
-        <div className="address mono">{data.peerId}</div>
+        <div className="address mono"><Secret value={data.peerId} /></div>
         <div className="button-row">
           <button onClick={copyPeer}>{copied ? 'Copied' : 'Copy peer id'}</button>
         </div>
@@ -72,7 +73,7 @@ function Connectivity({ api }) {
       {data.multiaddresses?.length > 0 && (
         <div className="card">
           <div className="card-title">Your Addresses</div>
-          {data.multiaddresses.map((a, i) => <div className="mono" style={{ fontSize: 12, marginBottom: 4 }} key={i}>{a}</div>)}
+          {data.multiaddresses.map((a, i) => <div className="mono" style={{ fontSize: 12, marginBottom: 4 }} key={i}><Secret value={a} /></div>)}
         </div>
       )}
     </>

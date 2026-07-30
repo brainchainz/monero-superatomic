@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { Secret } from './privacy.jsx'
 
 function Balances({ api }) {
   const [data, setData] = useState(null)
@@ -29,15 +30,15 @@ function Balances({ api }) {
     <div className="grid-2">
       <div className="card">
         <div className="card-title">Monero Balance</div>
-        <div className="big">{fmt(xmr.balance)} XMR</div>
+        <div className="big"><Secret value={fmt(xmr.balance)} /> XMR</div>
         <div className="grid-2" style={{ marginTop: 8, marginBottom: 8 }}>
-          <div><div className="label">Available</div><div className="value">{fmt(xmr.unlocked ?? xmr.balance)}</div></div>
-          <div><div className="label">Pending</div><div className="value">{fmt(pending)}{pending > 0 ? ' ⏳' : ''}</div></div>
+          <div><div className="label">Available</div><div className="value"><Secret value={fmt(xmr.unlocked ?? xmr.balance)} /></div></div>
+          <div><div className="label">Pending</div><div className="value"><Secret value={fmt(pending)} />{pending > 0 ? ' ⏳' : ''}</div></div>
         </div>
       </div>
       <div className="card">
         <div className="card-title">Bitcoin Balance</div>
-        <div className="big">{fmtBtc(data.bitcoin.balance)} BTC</div>
+        <div className="big"><Secret value={fmtBtc(data.bitcoin.balance)} /> BTC</div>
         <div className="muted">Internal ASB wallet</div>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { copyText } from './clipboard.js'
+import { Secret } from './privacy.jsx'
 
 // Shows the ASB's Monero address. Send XMR here to fund the liquidity the ASB
 // offers for swaps.
@@ -36,7 +37,7 @@ function Funding({ api }) {
       {!address && !error && <div className="muted">Waiting for the wallet to come online...</div>}
       {address && (
         <>
-          <div className="address mono">{address}</div>
+          <div className="address mono"><Secret value={address} /></div>
           <div className="button-row">
             <button onClick={copy}>{copied ? 'Copied' : 'Copy address'}</button>
           </div>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Secret } from './privacy.jsx'
 
 function Seeds({ api, token }) {
   const [seed, setSeed] = useState(null)
@@ -155,7 +156,9 @@ function Seeds({ api, token }) {
         {seed && (
           <div className="seed-box">
             <div className="seed-label">{seed.type === 'monero' ? 'Monero Seed (restores XMR in Feather/CLI)' : 'Bitcoin Descriptor (restores BTC)'}</div>
-            <pre>{seed.type === 'monero' ? seed.seed : seed.descriptor}</pre>
+            {/* Masked under privacy mode too: a guardrail against revealing a
+                seed while recording. Hover to read it. */}
+            <pre><Secret value={seed.type === 'monero' ? seed.seed : seed.descriptor} /></pre>
             {seed.type === 'monero' && seed.restore_height != null && (
               <>
                 <div className="seed-label">Restore Height</div>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Txid from './Txid.jsx'
 import { btcTxUrl } from './explorers.js'
+import { Secret } from './privacy.jsx'
 
 // Happy-path phase order, normalized (lowercase, alphanumerics only) so it
 // matches the ASB's AliceState names regardless of formatting. The maker (Alice)
@@ -79,17 +80,19 @@ function Swaps({ api, explorers }) {
           return (
             <div key={swap.swap_id} className="swap-row">
               <div className="swap-head">
-                <span className="swap-id" title={swap.swap_id}>{swap.swap_id.slice(0, 8)}...</span>
+                <span className="swap-id"><Secret value={swap.swap_id.slice(0, 8) + '...'} /></span>
                 <span className={`state ${swap.completed ? (failed ? 'bad' : 'done') : 'open'}`}>{humanize(swap.state)}</span>
-                <span className="date">{swap.start_date}</span>
+                {/* Timestamps are identifying: a date and time can be matched
+                    against the public chains to pin down which swap this was. */}
+                <span className="date"><Secret value={swap.start_date} /></span>
               </div>
               <div className="swap-bar">
                 <div className="swap-bar-fill" style={{ width: `${pct}%`, background: failed ? 'var(--bad)' : undefined }} />
               </div>
               <div className="swap-details">
-                <span>BTC: {fmtBtc(swap.btc_amount)}</span>
-                <span>XMR: {fmtXmr(swap.xmr_amount)}</span>
-                <span>Rate: {fmtBtc(swap.exchange_rate)}/XMR</span>
+                <span>BTC: <Secret value={fmtBtc(swap.btc_amount)} /></span>
+                <span>XMR: <Secret value={fmtXmr(swap.xmr_amount)} /></span>
+                <span>Rate: <Secret value={fmtBtc(swap.exchange_rate) + '/XMR'} /></span>
               </div>
               {swap.btc_lock_txid && <Txid label="Lock" txid={swap.btc_lock_txid} url={btcTxUrl(swap.btc_lock_txid, explorers)} />}
               {swap.btc_redeem_txid && <Txid label="Redeem" txid={swap.btc_redeem_txid} url={btcTxUrl(swap.btc_redeem_txid, explorers)} />}

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { Secret } from './privacy.jsx'
 
 function Quote({ api }) {
   const [q, setQ] = useState(null)
@@ -22,10 +23,14 @@ function Quote({ api }) {
   return (
     <div className="card quote">
       <div className="card-title">Current Offer</div>
-      <div className="grid-3">
-        <div><div className="label">Price</div><div className="value">{q.price} BTC / XMR</div></div>
-        <div><div className="label">Min</div><div className="value">{q.min_quantity} BTC</div></div>
-        <div><div className="label">Max</div><div className="value">{q.max_quantity} BTC</div></div>
+      <div className="grid-4">
+        <div><div className="label">Price</div><div className="value"><Secret value={`${q.price} BTC / XMR`} /></div></div>
+        <div>
+          <div className="label">Spread</div>
+          <div className="value"><Secret value={q.spread != null ? `${q.spread}%` : 'n/a'} /></div>
+        </div>
+        <div><div className="label">Min</div><div className="value"><Secret value={`${q.min_quantity} BTC`} /></div></div>
+        <div><div className="label">Max</div><div className="value"><Secret value={`${q.max_quantity} BTC`} /></div></div>
       </div>
     </div>
   )

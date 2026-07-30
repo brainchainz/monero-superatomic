@@ -10,6 +10,7 @@ import ConfigEditor from './ConfigEditor.jsx'
 import Logs from './Logs.jsx'
 import Seeds from './Seeds.jsx'
 import HowTo from './HowTo.jsx'
+import PrivacyToggle from './PrivacyToggle.jsx'
 
 const TABS = [
   { id: 'overview', label: 'Overview' },
@@ -29,6 +30,7 @@ function Dashboard({ token, onLogout }) {
   const [error, setError] = useState('')
   const [pendingCfg, setPendingCfg] = useState(null) // settings handed from the Planner to Config
   const [uiSettings, setUiSettings] = useState({}) // explorer URLs etc. (/data/ui-settings.json)
+  const [market, setMarket] = useState(null) // XMR/BTC market rate for the header
 
   function applyToConfig(vals) {
     setPendingCfg(vals)
@@ -68,6 +70,21 @@ function Dashboard({ token, onLogout }) {
     api('/ui-settings').then(s => { if (s) setUiSettings(s) }).catch(() => {})
   }, [api])
 
+  // Market rate for the header, derived by the backend from the engine's own
+  // quote. Slow poll: the rate moves far less than balances do.
+  useEffect(() => {
+    let t
+    async function poll() {
+      try {
+        const q = await api('/quote')
+        if (q && q.market) setMarket(q.market)
+      } catch { /* engine restarting; keep the last rate */ }
+      t = setTimeout(poll, 30000)
+    }
+    poll()
+    return () => clearTimeout(t)
+  }, [api])
+
   return (
     <div className="dashboard">
       <header>
@@ -79,6 +96,14 @@ function Dashboard({ token, onLogout }) {
           </div>
         </div>
         <div className="header-right">
+          <PrivacyToggle />
+          {market && (
+            <div className="market-rate" title="Market rate, from the swap engine's price feeds">
+              <span className="market-pair">XMR/BTC</span>
+              {/* Public market data, identical for every operator: nothing to hide. */}
+              <span className="market-value">{Number(market).toFixed(8)}</span>
+            </div>
+          )}
           {status && (
             <div className={`pill ${status.asbConnected ? 'ok' : 'bad'}`}>
               {status.asbConnected ? 'ASB Online' : 'ASB Offline'}

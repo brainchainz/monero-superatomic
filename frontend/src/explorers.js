@@ -19,12 +19,17 @@ function autoBase(port) {
   return `${window.location.protocol}//${window.location.hostname}:${port}`
 }
 
+// These become href values, so refuse anything that is not http(s). The backend
+// sanitizes too; this is the second lock on the same door, because a scheme
+// like "javascript:" here would run in the dashboard's origin.
+function safeBase(override, port) {
+  return /^https?:\/\/[^\s]+$/i.test(String(override || '')) ? override : autoBase(port)
+}
+
 export function btcTxUrl(txid, settings) {
-  const base = settings?.btcExplorer || autoBase(MEMPOOL_PORT)
-  return `${base}/tx/${txid}`
+  return `${safeBase(settings?.btcExplorer, MEMPOOL_PORT)}/tx/${encodeURIComponent(txid)}`
 }
 
 export function xmrTxUrl(txid, settings) {
-  const base = settings?.xmrExplorer || autoBase(MONEROSPACE_PORT)
-  return `${base}/tx/${txid}`
+  return `${safeBase(settings?.xmrExplorer, MONEROSPACE_PORT)}/tx/${encodeURIComponent(txid)}`
 }

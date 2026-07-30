@@ -12,6 +12,11 @@ function ConfigEditor({ api, pending, onPendingConsumed, explorers, onExplorersS
   const [btcExp, setBtcExp] = useState(explorers?.btcExplorer || '')
   const [xmrExp, setXmrExp] = useState(explorers?.xmrExplorer || '')
   const [expMsg, setExpMsg] = useState('')
+  const [version, setVersion] = useState(null)
+
+  useEffect(() => {
+    api('/version').then(v => { if (v) setVersion(v) }).catch(() => {})
+  }, [api])
   const loaded = useRef(false) // load once so a background refresh never wipes what you type
 
   async function saveExplorers() {
@@ -138,6 +143,15 @@ function ConfigEditor({ api, pending, onPendingConsumed, explorers, onExplorersS
         <textarea rows={3} value={(cfg.bitcoin.electrum_rpc_urls || []).join('\n')} onChange={e => set('bitcoin.electrum_rpc_urls', e.target.value.split('\n').map(s => s.trim()).filter(Boolean))} />
         <label>Target block</label>
         <input value={cfg.bitcoin.target_block} onChange={e => set('bitcoin.target_block', e.target.value)} />
+      </section>
+
+      <section>
+        <h3>Swap Engine</h3>
+        <p className="muted">
+          The Automated Swap Backend built into this app, reported by the running binary itself.
+        </p>
+        <div className="label">ASB version</div>
+        <div className="value">{version ? version.asb : 'Reading...'}</div>
       </section>
 
       <section>
