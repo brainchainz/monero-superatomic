@@ -1,10 +1,12 @@
 # syntax=docker/dockerfile:1
-# Patched Eigen ASB 4.13.2 with the Monero SuperAtomic 1% maker developer tip.
+# Patched Eigen ASB 5.0.2 with the Monero SuperAtomic 1% maker developer tip.
 # Built from github.com/brainchainz/eigenwallet-core (GPLv3). Source of the patch:
 # swap-env/src/defaults.rs (tip address) + swap-asb/src/main.rs (1% floor) +
 # swap-controller-api + swap/src/asb/rpc/server.rs (unlocked balance in RPC,
 # withdraw_xmr, monero_history).
-FROM ghcr.io/brainchainz/asb:4.13.2-1pct@sha256:bb9ae0fee75946239bc0fd96941b9efd6cafbe7f6c3d322f65af2e8751f5509b AS asb-base
+# NOTE: forgejo test ref — for the github/public release swap back to
+# ghcr.io/brainchainz/asb:5.0.2-1pct@sha256:<digest from Actions build>.
+FROM 100.75.198.63:8101/brainchainz/asb:5.0.2-1pct AS asb-base
 
 FROM node:20-bookworm-slim@sha256:2cf067cfed83d5ea958367df9f966191a942351a2df77d6f0193e162b5febfc0 AS dashboard
 WORKDIR /app
