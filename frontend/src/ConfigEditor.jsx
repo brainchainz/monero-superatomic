@@ -5,6 +5,12 @@ const CLEARNET_ADDR = '/ip4/0.0.0.0/tcp/9939'
 const num = v => { const n = Number(v); return Number.isFinite(n) ? n : 0 }
 const pctFromFrac = v => +(((Number(v) || 0) * 100).toFixed(6))
 const fracFromPct = v => +(((Number(v) || 0) / 100).toFixed(8))
+// asb 5.x validates both fee multipliers at startup and refuses to boot on an
+// out-of-range value, so clamp here instead of bricking the engine on Save.
+const clampNum = (v, lo, hi, dflt) => { const n = Number(v); return Number.isFinite(n) ? Math.min(hi, Math.max(lo, n)) : dflt }
+// btc_redeem_base_fee_multiplier is parsed as an exact decimal *string* in 5.x
+// (TOML quoted) so the file never round-trips through a float — send it as one.
+const decStr = (v, lo, hi, dflt) => clampNum(v, lo, hi, Number(dflt)).toFixed(2)
 
 function ConfigEditor({ api, pending, onPendingConsumed, explorers, onExplorersSaved }) {
   const [cfg, setCfg] = useState(null)
@@ -38,6 +44,12 @@ function ConfigEditor({ api, pending, onPendingConsumed, explorers, onExplorersS
       // The maker binary floors the tip at 1% regardless of config, so display
       // at least 1 rather than showing a number the engine will not honor.
       c.maker.developer_tip = Math.max(1, pctFromFrac(c.maker.developer_tip))
+      // asb 5.x removed maker.btc_redeem_fee_multiplier and added two fee
+      // knobs in its place. Migrate any config written by an older build so a
+      // Save here produces a file the 5.x binary actually accepts.
+      if ('btc_redeem_fee_multiplier' in c.maker) delete c.maker.btc_redeem_fee_multiplier
+      if (c.maker.btc_swap_fee_rate_multiplier === undefined) c.maker.btc_swap_fee_rate_multiplier = 1.0
+      if (c.maker.btc_redeem_base_fee_multiplier === undefined) c.maker.btc_redeem_base_fee_multiplier = '2.50'
       setCfg(c)
     })
   }, [api])
@@ -62,7 +74,8 @@ function ConfigEditor({ api, pending, onPendingConsumed, explorers, onExplorersS
       out.maker.developer_tip = fracFromPct(Math.max(1, Number(out.maker.developer_tip) || 0))
       out.maker.min_buy_btc = num(out.maker.min_buy_btc)
       out.maker.max_buy_btc = num(out.maker.max_buy_btc)
-      out.maker.btc_redeem_fee_multiplier = num(out.maker.btc_redeem_fee_multiplier)
+      out.maker.btc_swap_fee_rate_multiplier = clampNum(out.maker.btc_swap_fee_rate_multiplier, 1, 3, 1)
+      out.maker.btc_redeem_base_fee_multiplier = decStr(out.maker.btc_redeem_base_fee_multiplier, 2, 4, '2.50')
       out.maker.refund_policy.anti_spam_deposit_ratio = num(out.maker.refund_policy.anti_spam_deposit_ratio)
       out.bitcoin.target_block = parseInt(out.bitcoin.target_block, 10) || 1
       out.tor.hidden_service_num_intro_points = parseInt(out.tor.hidden_service_num_intro_points, 10) || 5
@@ -108,8 +121,10 @@ function ConfigEditor({ api, pending, onPendingConsumed, explorers, onExplorersS
         <input value={cfg.maker.refund_policy.anti_spam_deposit_ratio} onChange={e => set('maker.refund_policy.anti_spam_deposit_ratio', e.target.value)} />
         <label>External BTC redeem address</label>
         <input value={cfg.maker.external_bitcoin_redeem_address || ''} onChange={e => set('maker.external_bitcoin_redeem_address', e.target.value)} placeholder="Leave empty to use internal wallet" />
-        <label>BTC redeem fee multiplier</label>
-        <input value={cfg.maker.btc_redeem_fee_multiplier} onChange={e => set('maker.btc_redeem_fee_multiplier', e.target.value)} />
+        <label>BTC fee-rate multiplier (1.0–3.0)</label>
+        <input value={cfg.maker.btc_swap_fee_rate_multiplier} onChange={e => set('maker.btc_swap_fee_rate_multiplier', e.target.value)} />
+        <label>BTC redeem base fee multiplier (2.00–4.00)</label>
+        <input value={cfg.maker.btc_redeem_base_fee_multiplier} onChange={e => set('maker.btc_redeem_base_fee_multiplier', e.target.value)} />
         <label>Developer tip (%)</label>
         <input value={cfg.maker.developer_tip} onChange={e => set('maker.developer_tip', e.target.value)} />
         <p className="muted" style={{ marginTop: '-6px' }}>
