@@ -4,9 +4,9 @@
 # swap-env/src/defaults.rs (tip address) + swap-asb/src/main.rs (1% floor) +
 # swap-controller-api + swap/src/asb/rpc/server.rs (unlocked balance in RPC,
 # withdraw_xmr, monero_history).
-# NOTE: forgejo test ref — for the github/public release swap back to
-# ghcr.io/brainchainz/asb:5.0.2-1pct@sha256:<digest from Actions build>.
-FROM 100.75.198.63:8101/brainchainz/asb:5.0.2-1pct AS asb-base
+# Public base (ghcr, multi-arch, digest-pinned; built by the
+# "Build SuperSwap asb image" workflow from swap-asb/Dockerfile).
+FROM ghcr.io/brainchainz/asb:5.0.2-1pct@sha256:655524bbb183d979b94626e4ac5d54abe55a1ea5c4ad576758546b6276bcfa34 AS asb-base
 
 FROM node:20-bookworm-slim@sha256:2cf067cfed83d5ea958367df9f966191a942351a2df77d6f0193e162b5febfc0 AS dashboard
 WORKDIR /app
