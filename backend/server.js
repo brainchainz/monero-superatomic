@@ -242,8 +242,14 @@ app.get('/api/quote', requireAuth, asyncHandler(async (req, res) => {
   // engine's own price feeds: the dashboard never calls an external price API.
   let market = null
   let spreadPct = null
+  let configuredMin = null
   try {
-    const spread = Number(TOML.parse(fs.readFileSync(CONFIG_PATH, 'utf8')).maker.ask_spread) || 0
+    const maker = TOML.parse(fs.readFileSync(CONFIG_PATH, 'utf8')).maker
+    // Engine 5.0.4+ may quote a higher minimum than min_buy_btc so that every
+    // quoted amount can still pay for its refund path. Return both so the UI
+    // can explain the difference.
+    if (maker.min_buy_btc != null) configuredMin = Number(maker.min_buy_btc)
+    const spread = Number(maker.ask_spread) || 0
     if (spread > -1) market = ask / (1 + spread)
     // Whole-number percent for display, matching the Config tab's convention.
     spreadPct = +(spread * 100).toFixed(4)
@@ -253,6 +259,7 @@ app.get('/api/quote', requireAuth, asyncHandler(async (req, res) => {
     market,
     spread: spreadPct,
     min_quantity: q.min_quantity / SATS_PER_BTC,
+    configured_min: configuredMin,
     max_quantity: q.max_quantity / SATS_PER_BTC
   })
 }))

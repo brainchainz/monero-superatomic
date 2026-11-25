@@ -119,6 +119,12 @@ function ConfigEditor({ api, pending, onPendingConsumed, explorers, onExplorersS
         <input value={cfg.maker.ask_spread} onChange={e => set('maker.ask_spread', e.target.value)} />
         <label>Anti-spam deposit ratio</label>
         <input value={cfg.maker.refund_policy.anti_spam_deposit_ratio} onChange={e => set('maker.refund_policy.anti_spam_deposit_ratio', e.target.value)} />
+        <p className="muted" style={{ marginTop: '-6px' }}>
+          The engine may quote a higher minimum than Min BTC per swap. Small swaps cannot
+          cover their refund transaction fees and deposit, so it only offers amounts it can
+          actually set up. A higher deposit ratio can raise that minimum. The Overview tab
+          shows the minimum takers currently see.
+        </p>
         <label>External BTC redeem address</label>
         <input value={cfg.maker.external_bitcoin_redeem_address || ''} onChange={e => set('maker.external_bitcoin_redeem_address', e.target.value)} placeholder="Leave empty to use internal wallet" />
         <label>BTC fee-rate multiplier (1.0–3.0)</label>
